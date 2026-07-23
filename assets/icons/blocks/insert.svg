@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <!-- Block reference boundary -->
+  <rect x="6" y="5" width="12" height="10" fill="none" stroke="#cccccc" stroke-width="1.4" rx="1"/>
+  <!-- Block interior cross (represents block content) -->
+  <line x1="9" y1="10" x2="15" y2="10" stroke="#888888" stroke-width="1"/>
+  <line x1="12" y1="7" x2="12" y2="13" stroke="#888888" stroke-width="1"/>
+  <!-- Corner handle marks -->
+  <rect x="5" y="4" width="2" height="2" fill="#aaaaaa" rx="0.3"/>
+  <rect x="17" y="4" width="2" height="2" fill="#aaaaaa" rx="0.3"/>
+  <rect x="5" y="14" width="2" height="2" fill="#aaaaaa" rx="0.3"/>
+  <rect x="17" y="14" width="2" height="2" fill="#aaaaaa" rx="0.3"/>
+  <!-- Insertion arrow pointing down to base point -->
+  <line x1="12" y1="16" x2="12" y2="20.5" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round"/>
+  <polyline points="9.5,18.5 12,21 14.5,18.5"
+            fill="none" stroke="#4a9eff" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,10 @@
+pub mod about;
+pub mod layout_manager;
+pub mod plot;
+pub mod plugin_manager;
+pub mod shortcuts;
+pub mod layers;
+pub mod update_notice;
+pub mod open_progress;
+pub mod attribute_editor;
+pub mod alias_editor;

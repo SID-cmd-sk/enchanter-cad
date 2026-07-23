@@ -1,0 +1,460 @@
+use acadrust::entities::Ellipse;
+use truck_modeling::{builder, BSplineCurve, Curve, Edge, KnotVec, Point3, Wire};
+
+use crate::command::EntityTransform;
+use crate::entities::common::{
+    center_grip, edit_prop as edit, parse_f64, ro_prop as ro, square_grip,
+};
+use crate::entities::traits::TruckConvertible;
+use crate::scene::convert::acad_to_truck::{TruckEntity, TruckObject};
+use crate::scene::model::object::{GripApply, GripDef, PropSection};
+use crate::scene::model::wire_model::SnapHint;
+
+const TAU: f64 = std::f64::consts::TAU;
+
+fn to_truck(ell: &Ellipse) -> TruckEntity {
+    let normal = (ell.normal.x, ell.normal.y, ell.normal.z);
+    let (nx, ny, nz) = normal;
+
+    // ELLIPSE is one of the few WCS entities in DXF: `center` (code 10) and
+    // `major_axis` (code 11) are world coordinates already — unlike ARC /
+    // CIRCLE, whose centers are OCS. (This used to run both through the
+    // arbitrary-axis OCS, which misplaced any ellipse whose normal isn't
+    // Z-up — e.g. the (0,0,-1) result of a mirrored-block explode.)
+    let (cwx, cwy, cwz) = (ell.center.x, ell.center.y, ell.center.z);
+    let wcs_maj = glam::Vec3::new(
+        ell.major_axis.x as f32,
+        ell.major_axis.y as f32,
+        ell.major_axis.z as f32,
+    );
+    let r_major = wcs_maj.length() as f64;
+    let r_minor = r_major * ell.minor_axis_ratio;
+    let t0 = ell.start_parameter;
+    let mut t1 = ell.end_parameter;
+    if t1 <= t0 {
+        t1 += TAU;
+    }
+    let u = if r_major > 1e-9 {
+        wcs_maj / wcs_maj.length()
+    } else {
+        glam::Vec3::X
+    };
+    // Minor axis direction: WCS_normal × u (both unit vectors, always perpendicular).
+    let wcs_normal = glam::Vec3::new(nx as f32, ny as f32, nz as f32);
+    let v_axis = wcs_normal.cross(u);
+    let center_v3 = glam::DVec3::new(cwx, cwy, cwz);
+    let is_closed = (t1 - t0 - TAU).abs() < 1e-6;
+
+    if is_closed {
+        let n = 16usize;
+        let pts_upper: Vec<Point3> = (0..=n)
+            .map(|i| {
+                let t = (i as f64 / n as f64) * std::f64::consts::PI;
+                let lx = (r_major * t.cos()) as f32;
+                let lz = (r_minor * t.sin()) as f32;
+                Point3::new(
+                    cwx + (lx * u.x + lz * v_axis.x) as f64,
+                    cwy + (lx * u.y + lz * v_axis.y) as f64,
+                    cwz + (lx * u.z + lz * v_axis.z) as f64,
+                )
+            })
+            .collect();
+        let pts_lower: Vec<Point3> = (0..=n)
+            .map(|i| {
+                let t = std::f64::consts::PI + (i as f64 / n as f64) * std::f64::consts::PI;
+                let lx = (r_major * t.cos()) as f32;
+                let lz = (r_minor * t.sin()) as f32;
+                Point3::new(
+                    cwx + (lx * u.x + lz * v_axis.x) as f64,
+                    cwy + (lx * u.y + lz * v_axis.y) as f64,
+                    cwz + (lx * u.z + lz * v_axis.z) as f64,
+                )
+            })
+            .collect();
+        let v_pos = builder::vertex(*pts_upper.first().unwrap());
+        let v_neg = builder::vertex(*pts_upper.last().unwrap());
+        let kv_u = KnotVec::uniform_knot(1, n);
+        let kv_l = KnotVec::uniform_knot(1, n);
+        let spl_u = BSplineCurve::new(kv_u, pts_upper);
+        let spl_l = BSplineCurve::new(kv_l, pts_lower);
+        let edge_upper = Edge::new(&v_pos, &v_neg, Curve::BSplineCurve(spl_u));
+        let edge_lower = Edge::new(&v_neg, &v_pos, Curve::BSplineCurve(spl_l));
+        let wire: Wire = [edge_upper, edge_lower].into_iter().collect();
+        // Quadrant points at ±major and ±minor axis endpoints in WCS.
+        let q = |lx: f64, lz: f64| {
+            glam::DVec3::new(
+                cwx + lx * u.x as f64 + lz * v_axis.x as f64,
+                cwy + lx * u.y as f64 + lz * v_axis.y as f64,
+                cwz + lx * u.z as f64 + lz * v_axis.z as f64,
+            )
+        };
+        let snap_pts = vec![
+            (center_v3, SnapHint::Center),
+            (q(r_major, 0.0), SnapHint::Quadrant),
+            (q(-r_major, 0.0), SnapHint::Quadrant),
+            (q(0.0, r_minor), SnapHint::Quadrant),
+            (q(0.0, -r_minor), SnapHint::Quadrant),
+        ];
+        TruckEntity {
+            object: TruckObject::Contour(wire),
+            snap_pts,
+            tangent_geoms: vec![],
+            key_vertices: vec![],
+            fill_tris: vec![],
+        }
+    } else {
+        let n = 32usize;
+        let ctrl_pts: Vec<Point3> = (0..=n)
+            .map(|i| {
+                let t = t0 + (t1 - t0) * (i as f64 / n as f64);
+                let lx = (r_major * t.cos()) as f32;
+                let lz = (r_minor * t.sin()) as f32;
+                Point3::new(
+                    cwx + (lx * u.x + lz * v_axis.x) as f64,
+                    cwy + (lx * u.y + lz * v_axis.y) as f64,
+                    cwz + (lx * u.z + lz * v_axis.z) as f64,
+                )
+            })
+            .collect();
+        let kv = KnotVec::uniform_knot(1, n);
+        let bspline = BSplineCurve::new(kv, ctrl_pts.clone());
+        let v_start = builder::vertex(*ctrl_pts.first().unwrap());
+        let v_end = builder::vertex(*ctrl_pts.last().unwrap());
+        let edge = Edge::new(&v_start, &v_end, Curve::BSplineCurve(bspline));
+        let pt_start = ctrl_pts.first().unwrap();
+        let pt_end = ctrl_pts.last().unwrap();
+        let key_vertices: Vec<[f64; 3]> = vec![
+            [pt_start.x, pt_start.y, pt_start.z],
+            [pt_end.x, pt_end.y, pt_end.z],
+        ];
+        TruckEntity {
+            object: TruckObject::Curve(edge),
+            snap_pts: vec![(center_v3, SnapHint::Center)],
+            tangent_geoms: vec![],
+            key_vertices,
+            fill_tris: vec![],
+        }
+    }
+}
+
+fn grips(ell: &Ellipse) -> Vec<GripDef> {
+    let ctr = glam::DVec3::new(ell.center.x, ell.center.y, ell.center.z);
+    let maj = glam::DVec3::new(
+        ell.center.x + ell.major_axis.x,
+        ell.center.y + ell.major_axis.y,
+        ell.center.z + ell.major_axis.z,
+    );
+    let major_xy =
+        ((ell.major_axis.x * ell.major_axis.x + ell.major_axis.y * ell.major_axis.y) as f64).sqrt();
+    let (px, py) = if major_xy > 1e-10 {
+        let s = ell.major_axis_length() * ell.minor_axis_ratio / major_xy;
+        (-ell.major_axis.y * s, ell.major_axis.x * s)
+    } else {
+        (0.0, ell.major_axis_length() * ell.minor_axis_ratio)
+    };
+    let min = glam::DVec3::new(ell.center.x + px, ell.center.y + py, ell.center.z);
+    vec![
+        center_grip(0, ctr),
+        square_grip(1, maj),
+        square_grip(2, min),
+    ]
+}
+
+fn properties(ell: &Ellipse) -> Vec<PropSection> {
+    use crate::entities::traits::MassPropsCalc;
+
+    let r_major = ell.major_axis_length();
+    let r_minor = ell.minor_axis_length();
+
+    // Axis frame in WCS: major-axis unit vector `u`, minor direction `v = normal × u`.
+    let u = glam::DVec3::new(ell.major_axis.x, ell.major_axis.y, ell.major_axis.z);
+    let u = if r_major > 1e-12 {
+        u / r_major
+    } else {
+        glam::DVec3::X
+    };
+    let n = glam::DVec3::new(ell.normal.x, ell.normal.y, ell.normal.z);
+    let v = n.cross(u);
+
+    // Parametric points in WCS: center + r_major·cos(t)·u + r_minor·sin(t)·v.
+    let center = glam::DVec3::new(ell.center.x, ell.center.y, ell.center.z);
+    let pt_at = |t: f64| center + u * (r_major * t.cos()) + v * (r_minor * t.sin());
+    let start = pt_at(ell.start_parameter);
+    let end = pt_at(ell.end_parameter);
+
+    // Axis vectors (center → axis endpoint) in WCS.
+    let major_vec = u * r_major;
+    let minor_vec = v * r_minor;
+
+    let start_angle = ell.start_parameter.to_degrees().rem_euclid(360.0);
+    let end_angle = ell.end_parameter.to_degrees().rem_euclid(360.0);
+
+    let props = ell.mass_props();
+
+    vec![PropSection {
+        title: "Geometry".into(),
+        props: vec![
+            ro("Start X", "start_x", format!("{:.4}", start.x)),
+            ro("Start Y", "start_y", format!("{:.4}", start.y)),
+            ro("Start Z", "start_z", format!("{:.4}", start.z)),
+            edit("Center X", "center_x", ell.center.x),
+            edit("Center Y", "center_y", ell.center.y),
+            edit("Center Z", "center_z", ell.center.z),
+            ro("End X", "end_x", format!("{:.4}", end.x)),
+            ro("End Y", "end_y", format!("{:.4}", end.y)),
+            ro("End Z", "end_z", format!("{:.4}", end.z)),
+            edit("Major radius", "major_r", r_major),
+            edit("Minor radius", "minor_r", r_minor),
+            edit("Radius ratio", "ratio", ell.minor_axis_ratio),
+            edit("Start angle", "start_angle", start_angle),
+            edit("End angle", "end_angle", end_angle),
+            ro("Major axis vector X", "major_x", format!("{:.4}", major_vec.x)),
+            ro("Major axis vector Y", "major_y", format!("{:.4}", major_vec.y)),
+            ro("Major axis vector Z", "major_z", format!("{:.4}", major_vec.z)),
+            ro("Minor axis vector X", "minor_x", format!("{:.4}", minor_vec.x)),
+            ro("Minor axis vector Y", "minor_y", format!("{:.4}", minor_vec.y)),
+            ro("Minor axis vector Z", "minor_z", format!("{:.4}", minor_vec.z)),
+            ro("Area", "area", format!("{:.4}", props.area)),
+            ro("Start parameter", "start_param", format!("{:.4}", ell.start_parameter)),
+            ro("End parameter", "end_param", format!("{:.4}", ell.end_parameter)),
+            ro("Length", "length", format!("{:.4}", props.perimeter)),
+            ro("Normal X", "normal_x", format!("{:.4}", ell.normal.x)),
+            ro("Normal Y", "normal_y", format!("{:.4}", ell.normal.y)),
+            ro("Normal Z", "normal_z", format!("{:.4}", ell.normal.z)),
+        ],
+    }]
+}
+
+fn apply_geom_prop(ell: &mut Ellipse, field: &str, value: &str) {
+    let Some(v) = parse_f64(value) else {
+        return;
+    };
+    match field {
+        "center_x" => ell.center.x = v,
+        "center_y" => ell.center.y = v,
+        "center_z" => ell.center.z = v,
+        "major_r" => {
+            let cur = ell.major_axis_length();
+            if cur > 1e-12 && v > 0.0 {
+                let s = v / cur;
+                ell.major_axis.x *= s;
+                ell.major_axis.y *= s;
+                ell.major_axis.z *= s;
+            }
+        }
+        "minor_r" => {
+            let major = ell.major_axis_length();
+            if major > 1e-12 && v > 0.0 {
+                ell.minor_axis_ratio = v / major;
+            }
+        }
+        "ratio" if v > 0.0 => ell.minor_axis_ratio = v,
+        "start_angle" => ell.start_parameter = v.to_radians(),
+        "end_angle" => ell.end_parameter = v.to_radians(),
+        _ => {}
+    }
+}
+
+fn apply_grip(ell: &mut Ellipse, grip_id: usize, apply: GripApply) {
+    match (grip_id, apply) {
+        (0, GripApply::Translate(d)) => {
+            ell.center.x += d.x as f64;
+            ell.center.y += d.y as f64;
+            ell.center.z += d.z as f64;
+        }
+        (0, GripApply::Absolute(p)) => {
+            ell.center.x = p.x as f64;
+            ell.center.y = p.y as f64;
+            ell.center.z = p.z as f64;
+        }
+        (1, GripApply::Absolute(p)) => {
+            ell.major_axis.x = p.x as f64 - ell.center.x;
+            ell.major_axis.y = p.y as f64 - ell.center.y;
+            ell.major_axis.z = p.z as f64 - ell.center.z;
+        }
+        (2, GripApply::Absolute(p)) => {
+            // Minor-axis grip. The two axes are always perpendicular, so this
+            // grip stretches one of them along its fixed direction while the
+            // other stays put. Work in the ellipse's view plane (XY).
+            let mx = ell.major_axis.x;
+            let my = ell.major_axis.y;
+            let major_len = (mx * mx + my * my).sqrt();
+            if major_len <= 1e-10 {
+                return;
+            }
+            let major_unit = (mx / major_len, my / major_len);
+            let minor_unit = (-major_unit.1, major_unit.0);
+            let minor_len = major_len * ell.minor_axis_ratio;
+
+            let dx = p.x as f64 - ell.center.x;
+            let dy = p.y as f64 - ell.center.y;
+            // Which stored axis is actually under the cursor? Below a circle it
+            // is the minor direction; once the drag pushes the minor past the
+            // major and the axes swap, the grabbed endpoint sits on the major
+            // direction. Decide by cursor alignment — NOT by recomputing a perp
+            // from the just-swapped major every frame — so a continuous drag
+            // stays stable instead of flipping the major 90° each move (which
+            // made both axes balloon once the minor reached the major). The
+            // perpendicular (non-dragged) axis keeps its length; the longer axis
+            // is stored as the major so the ratio stays <= 1 per the file format.
+            let along_major = (dx * major_unit.0 + dy * major_unit.1).abs();
+            let along_minor = (dx * minor_unit.0 + dy * minor_unit.1).abs();
+            let (drag_dir, dragged_len, fixed_dir, fixed_len) = if along_minor >= along_major {
+                (minor_unit, along_minor, major_unit, major_len)
+            } else {
+                (major_unit, along_major, minor_unit, minor_len)
+            };
+            if fixed_len <= 1e-10 {
+                return;
+            }
+            if dragged_len >= fixed_len {
+                ell.major_axis.x = drag_dir.0 * dragged_len;
+                ell.major_axis.y = drag_dir.1 * dragged_len;
+                ell.minor_axis_ratio = (fixed_len / dragged_len).clamp(0.001, 1.0);
+            } else {
+                ell.major_axis.x = fixed_dir.0 * fixed_len;
+                ell.major_axis.y = fixed_dir.1 * fixed_len;
+                ell.minor_axis_ratio = (dragged_len / fixed_len).clamp(0.001, 1.0);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn apply_transform(ell: &mut Ellipse, t: &EntityTransform) {
+    crate::scene::view::transform::apply_standard_entity_transform(ell, t, |entity, p1, p2| {
+        crate::scene::view::transform::reflect_xy_point(
+            &mut entity.center.x,
+            &mut entity.center.y,
+            p1,
+            p2,
+        );
+        crate::scene::view::transform::reflect_xy_point(
+            &mut entity.major_axis.x,
+            &mut entity.major_axis.y,
+            p1,
+            p2,
+        );
+    });
+}
+
+impl TruckConvertible for Ellipse {
+    fn to_truck(&self, _document: &acadrust::CadDocument) -> Option<TruckEntity> {
+        Some(to_truck(self))
+    }
+}
+
+crate::impl_entity_basics!(Ellipse);
+
+impl crate::entities::traits::MassPropsCalc for acadrust::entities::Ellipse {
+    fn mass_props(&self) -> crate::entities::traits::MassProps {
+        use std::f64::consts::{PI, TAU};
+        let e = self;
+        let a = (e.major_axis.x.powi(2) + e.major_axis.y.powi(2)).sqrt();
+        let b = a * e.minor_axis_ratio;
+        let t0 = e.start_parameter;
+        let t1 = {
+            let mut t = e.end_parameter;
+            if t <= t0 {
+                t += TAU;
+            }
+            t
+        };
+        let span = t1 - t0;
+        let is_full = (span - TAU).abs() < 1e-6;
+        let area = if is_full {
+            PI * a * b
+        } else {
+            // Sector area of ellipse approximated via 256-pt integration
+            let n = 256usize;
+            let mut s = 0.0f64;
+            for k in 0..n {
+                let t = t0 + span * (k as f64 / n as f64);
+                let tp = t0 + span * ((k + 1) as f64 / n as f64);
+                let nx = e.major_axis.x / a;
+                let ny = e.major_axis.y / a;
+                let x0 = a * t.cos() * nx - b * t.sin() * ny;
+                let y0 = a * t.cos() * ny + b * t.sin() * nx;
+                let x1 = a * tp.cos() * nx - b * tp.sin() * ny;
+                let y1 = a * tp.cos() * ny + b * tp.sin() * nx;
+                s += x0 * y1 - x1 * y0;
+            }
+            (s / 2.0).abs()
+        };
+        // Arc length via 256-pt numerical integration
+        let nx = e.major_axis.x / a.max(1e-12);
+        let ny = e.major_axis.y / a.max(1e-12);
+        let perimeter = {
+            let n = 256usize;
+            let mut len = 0.0f64;
+            for k in 0..n {
+                let t = t0 + span * (k as f64 / n as f64);
+                let tp = t0 + span * ((k + 1) as f64 / n as f64);
+                let x0 = e.center.x + a * t.cos() * nx - b * t.sin() * ny;
+                let y0 = e.center.y + a * t.cos() * ny + b * t.sin() * nx;
+                let x1 = e.center.x + a * tp.cos() * nx - b * tp.sin() * ny;
+                let y1 = e.center.y + a * tp.cos() * ny + b * tp.sin() * nx;
+                len += (x1 - x0).hypot(y1 - y0);
+            }
+            len
+        };
+        crate::entities::traits::MassProps {
+            area,
+            perimeter,
+            cx: e.center.x,
+            cy: e.center.y,
+        }
+    }
+}
+
+#[cfg(test)]
+mod grip_tests {
+    use super::*;
+    use glam::DVec3;
+
+    fn ell(major_x: f64, ratio: f64) -> Ellipse {
+        let mut e = Ellipse::default();
+        e.center.x = 0.0;
+        e.center.y = 0.0;
+        e.center.z = 0.0;
+        e.major_axis.x = major_x;
+        e.major_axis.y = 0.0;
+        e.major_axis.z = 0.0;
+        e.minor_axis_ratio = ratio;
+        e
+    }
+    fn xy_len(v: &acadrust::entities::Ellipse) -> f64 {
+        (v.major_axis.x * v.major_axis.x + v.major_axis.y * v.major_axis.y).sqrt()
+    }
+
+    #[test]
+    fn minor_grip_below_major_updates_ratio_only() {
+        let mut e = ell(10.0, 0.5);
+        apply_grip(&mut e, 2, GripApply::Absolute(DVec3::new(0.0, 8.0, 0.0)));
+        assert!((xy_len(&e) - 10.0).abs() < 1e-9, "major axis unchanged");
+        assert!((e.minor_axis_ratio - 0.8).abs() < 1e-9, "ratio = 8/10");
+    }
+
+    #[test]
+    fn minor_grip_past_major_swaps_without_ballooning() {
+        // major=10 (+X), minor=5 (+Y). Drag the minor grip to (0,11), past major.
+        let mut e = ell(10.0, 0.5);
+        apply_grip(&mut e, 2, GripApply::Absolute(DVec3::new(0.0, 11.0, 0.0)));
+        assert!((xy_len(&e) - 11.0).abs() < 1e-9, "major follows the drag to 11");
+        assert!(e.major_axis.x.abs() < 1e-9, "major points +Y after the swap");
+        assert!(
+            (xy_len(&e) * e.minor_axis_ratio - 10.0).abs() < 1e-9,
+            "minor holds the old major length (10)"
+        );
+
+        // Keep dragging along +Y: the perpendicular axis must stay 10, not
+        // balloon, and the major must not flip 90° each frame (the reported bug).
+        apply_grip(&mut e, 2, GripApply::Absolute(DVec3::new(0.0, 13.0, 0.0)));
+        assert!((xy_len(&e) - 13.0).abs() < 1e-9, "major grows to 13");
+        assert!(e.major_axis.x.abs() < 1e-9, "major stays +Y (no flip)");
+        assert!(
+            (xy_len(&e) * e.minor_axis_ratio - 10.0).abs() < 1e-6,
+            "minor still 10 — no ballooning"
+        );
+    }
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
+  <!-- Circle -->
+  <circle cx="12" cy="13" r="8" stroke="#e0e0e0" stroke-width="1.5" fill="none"/>
+  <!-- Radius line with arrow -->
+  <line x1="12" y1="13" x2="19" y2="7" stroke="#4cc9f0" stroke-width="1.5" stroke-linecap="round"/>
+  <polygon points="19,7 16.2,8.8 17.5,11.2" fill="#4cc9f0"/>
+  <!-- R label -->
+  <text x="5" y="8" font-size="5" fill="#4cc9f0" font-family="monospace" font-weight="bold">R</text>
+</svg>
