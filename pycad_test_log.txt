@@ -1,0 +1,278 @@
+[02:20:32] >>> START command: DIMLINEAR
+[02:20:32] <<< END   command: DIMLINEAR  (Linear dimension: 100.00)
+[02:20:32] >>> START command: LEADER
+[02:20:32] <<< END   command: LEADER  (Leader created.)
+[02:20:32] >>> START command: POINT
+[02:20:32] <<< END   command: POINT  (Point created.)
+[02:20:32] >>> START command: OSNAP
+[02:20:32] <<< END   command: OSNAP  (Object snap modes: END MID NEA)
+[02:21:48] >>> START command: LINE
+[02:21:51] <<< END   command: LINE  (*Cancel*)
+[02:21:54] >>> START command: DIMLINEAR
+[02:21:59] <<< END   command: DIMLINEAR  (Linear dimension: 65.44)
+[02:22:05] >>> START command: DIMANG
+[02:22:10] <<< END   command: DIMANG  (Angular dimension: 41.2 deg)
+[02:22:15] >>> START command: DIMANG
+[02:22:21] <<< END   command: DIMANG  (Angular dimension: 19.5 deg)
+[02:22:46] >>> START command: DIMRAD
+[02:22:48] <<< END   command: DIMRAD  (*Cancel*)
+[02:22:52] CMD_INPUT: 'c'
+[02:22:52] >>> START command: CIRCLE
+[02:22:54] <<< END   command: CIRCLE  (Circle r=14.056 created.)
+[02:23:02] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:02] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:03] <<< END   command: CIRCLE  (*Cancel*)
+[02:23:04] >>> START command: DIMRAD
+[02:23:07] <<< END   command: DIMRAD  (Radius dimension: R14.41)
+[02:23:12] <<< END   command: DIMRAD  (*Cancel*)
+[02:23:13] CMD_INPUT: 'c'
+[02:23:13] >>> START command: CIRCLE
+[02:23:15] CMD_INPUT: '50'
+[02:23:15] <<< END   command: CIRCLE  (Circle r=50.000 created.)
+[02:23:23] >>> START command: DIMRAD
+[02:23:27] <<< END   command: DIMRAD  (Radius dimension: R10.69)
+[02:29:12] >>> START command: DIMLINEAR
+[02:29:12] <<< END   command: DIMLINEAR  (Linear dimension: 100.00)
+[02:29:12] >>> START command: MOVE
+[02:29:12] <<< END   command: MOVE  (Moved 1 object(s).)
+[02:29:12] >>> START command: DIMRAD
+[02:29:12] <<< END   command: DIMRAD  (Radius dimension: R25.00)
+[02:29:12] >>> START command: DIMANG
+[02:29:12] <<< END   command: DIMANG  (Angular dimension: 90.0 deg)
+[02:29:26] >>> START command: DIMLINEAR
+[02:29:26] <<< END   command: DIMLINEAR  (Linear dimension: 100.00)
+[02:52:01] >>> START command: SOLID
+[02:52:01] <<< END   command: SOLID  (unknown/not-implemented)
+[02:52:07] >>> START command: HATCH
+[02:52:07] <<< END   command: HATCH  (unknown/not-implemented)
+[02:52:09] >>> START command: MTEXT
+[02:52:15] CMD_INPUT: '50'
+[02:52:17] CMD_INPUT: '123'
+[02:52:17] <<< END   command: MTEXT  (Text created.)
+[02:52:31] >>> START command: BREAK
+[02:52:31] <<< END   command: BREAK  (BREAK: click entity then two break points (basic support - use canvas edit tools).)
+[02:52:44] CMD_INPUT: 'l'
+[02:52:44] >>> START command: LINE
+[02:52:49] <<< END   command: LINE  (*Cancel*)
+[02:52:50] >>> START command: BREAK
+[02:52:50] <<< END   command: BREAK  (BREAK: click entity then two break points (basic support - use canvas edit tools).)
+[02:52:55] >>> START command: BREAK
+[02:52:55] <<< END   command: BREAK  (BREAK: click entity then two break points (basic support - use canvas edit tools).)
+[02:53:12] CMD_INPUT: 'l'
+[02:53:12] >>> START command: LINE
+[02:53:14] CMD_INPUT: 'l'
+[02:53:14] <<< END   command: LINE  (*Cancel*)
+[02:53:14] >>> START command: LINE
+[02:53:20] <<< END   command: LINE  (*Cancel*)
+[02:53:23] CMD_INPUT: 'l'
+[02:53:23] >>> START command: LINE
+[02:53:33] <<< END   command: LINE  (*Cancel*)
+[02:53:36] >>> START command: EXTEND
+[02:53:36] <<< END   command: EXTEND  (EXTEND: select boundary then object to extend (line-to-line supported via canvas edit tools).)
+[02:53:39] <<< END   command: EXTEND  (*Cancel*)
+[02:53:40] <<< END   command: EXTEND  (*Cancel*)
+[02:53:41] <<< END   command: EXTEND  (*Cancel*)
+[02:53:41] <<< END   command: EXTEND  (*Cancel*)
+[02:53:41] <<< END   command: EXTEND  (*Cancel*)
+[02:53:41] <<< END   command: EXTEND  (*Cancel*)
+[02:53:41] <<< END   command: EXTEND  (*Cancel*)
+[02:53:50] >>> START command: DIMLINEAR
+[02:53:51] <<< END   command: DIMLINEAR  (Linear dimension: 517.97)
+[02:53:54] <<< END   command: DIMLINEAR  (*Cancel*)
+[02:53:56] CMD_INPUT: 'l'
+[02:53:56] >>> START command: LINE
+[02:53:59] <<< END   command: LINE  (*Cancel*)
+[02:54:01] >>> START command: DIMLINEAR
+[02:54:08] <<< END   command: DIMLINEAR  (Linear dimension: 135.40)
+[02:54:14] >>> START command: DIMRAD
+[02:54:17] <<< END   command: DIMRAD  (Radius dimension: R83.95)
+[02:54:19] <<< END   command: DIMRAD  (*Cancel*)
+[02:54:19] <<< END   command: DIMRAD  (*Cancel*)
+[02:54:20] <<< END   command: DIMRAD  (*Cancel*)
+[02:54:20] <<< END   command: DIMRAD  (*Cancel*)
+[02:54:29] <<< END   command: DIMRAD  (*Cancel*)
+[02:54:30] <<< END   command: DIMRAD  (*Cancel*)
+[02:54:32] CMD_INPUT: 'c'
+[02:54:32] >>> START command: CIRCLE
+[02:54:34] <<< END   command: CIRCLE  (Circle r=77.144 created.)
+[02:54:36] >>> START command: DIMDIA
+[02:54:41] <<< END   command: DIMDIA  (Diameter dimension: 14.22)
+[02:54:44] <<< END   command: DIMDIA  (*Cancel*)
+[02:54:45] <<< END   command: DIMDIA  (*Cancel*)
+[02:54:54] >>> START command: PLOT
+[02:54:54] <<< END   command: PLOT  (unknown/not-implemented)
+[02:54:58] >>> START command: PLOT
+[02:54:58] <<< END   command: PLOT  (unknown/not-implemented)
+[03:08:05] >>> START command: LINE
+[03:08:08] <<< END   command: LINE  (*Cancel*)
+[03:08:10] >>> START command: DIMLINEAR
+[03:08:31] <<< END   command: DIMLINEAR  (*Cancel*)
+[03:08:33] >>> START command: DIMANG
+[03:08:36] <<< END   command: DIMANG  (*Cancel*)
+[03:08:37] CMD_INPUT: 'c'
+[03:08:37] >>> START command: CIRCLE
+[03:08:38] <<< END   command: CIRCLE  (Circle r=30.556 created.)
+[03:08:40] >>> START command: DIMRAD
+[03:08:45] <<< END   command: DIMRAD  (*Cancel*)
+[03:08:45] <<< END   command: DIMRAD  (*Cancel*)
+[03:08:45] <<< END   command: DIMRAD  (*Cancel*)
+[03:08:45] <<< END   command: DIMRAD  (*Cancel*)
+[03:27:15] >>> START command: LINE
+[03:27:17] <<< END   command: LINE  (*Cancel*)
+[03:27:21] >>> START command: DIMLINEAR
+[03:27:23] <<< END   command: DIMLINEAR  (Linear dimension: 55.04)
+[03:27:25] >>> START command: DIMLINEAR
+[03:27:35] <<< END   command: DIMLINEAR  (Linear dimension: 48.54)
+[03:27:38] >>> START command: DIMLINEAR
+[03:27:40] <<< END   command: DIMLINEAR  (Linear dimension: 63.22)
+[03:27:45] >>> START command: DIMANG
+[03:28:19] >>> START command: CIRCLE
+[03:28:20] <<< END   command: CIRCLE  (Circle r=35.809 created.)
+[03:28:23] >>> START command: DIMDIA
+[03:28:27] <<< END   command: DIMDIA  (Diameter dimension: 66.38)
+[03:28:30] <<< END   command: DIMDIA  (*Cancel*)
+[03:28:31] <<< END   command: DIMDIA  (*Cancel*)
+[03:28:32] >>> START command: DIMRAD
+[03:29:10] CMD_INPUT: 'c'
+[03:29:10] >>> START command: CIRCLE
+[03:29:10] CMD_INPUT: 'c'
+[03:29:10] <<< END   command: CIRCLE  (*Cancel*)
+[03:29:10] >>> START command: CIRCLE
+[03:29:12] <<< END   command: CIRCLE  (Circle r=62.660 created.)
+[03:29:16] >>> START command: DIMRAD
+[03:29:19] <<< END   command: DIMRAD  (Radius dimension: R74.83)
+[03:29:44] CMD_INPUT: 'c'
+[03:29:44] >>> START command: CIRCLE
+[03:29:50] CMD_INPUT: 'c'
+[03:29:50] <<< END   command: CIRCLE  (*Cancel*)
+[03:29:50] >>> START command: CIRCLE
+[03:29:52] <<< END   command: CIRCLE  (Circle r=23.682 created.)
+[03:29:55] >>> START command: DIMRAD
+[03:29:57] <<< END   command: DIMRAD  (Radius dimension: R42.51)
+[03:30:04] CMD_INPUT: 'l'
+[03:30:04] >>> START command: LINE
+[03:30:08] <<< END   command: LINE  (*Cancel*)
+[03:30:10] >>> START command: DIMANG
+[03:30:43] CMD_INPUT: 'rec'
+[03:30:43] >>> START command: RECTANG
+[03:30:45] <<< END   command: RECTANG  (Rectangle created.)
+[03:30:54] CMD_INPUT: 'HATCH'
+[03:30:54] >>> START command: HATCH
+[03:30:56] <<< END   command: HATCH  (HATCH: nothing selected. Cancelled.)
+[03:31:10] <<< END   command: HATCH  (*Cancel*)
+[03:31:10] <<< END   command: HATCH  (*Cancel*)
+[03:31:10] <<< END   command: HATCH  (*Cancel*)
+[03:31:13] CMD_INPUT: 'HATCH'
+[03:31:13] >>> START command: HATCH
+[03:31:13] <<< END   command: HATCH  (HATCH: solid fill created.)
+[03:31:27] >>> START command: ELLIPSE
+[03:31:29] <<< END   command: ELLIPSE  (Ellipse created (rx=42.10, ry=31.36).)
+[03:31:33] <<< END   command: ELLIPSE  (*Cancel*)
+[03:31:33] <<< END   command: ELLIPSE  (*Cancel*)
+[03:31:33] <<< END   command: ELLIPSE  (*Cancel*)
+[03:31:33] <<< END   command: ELLIPSE  (*Cancel*)
+[03:31:37] CMD_INPUT: 'c'
+[03:31:37] >>> START command: CIRCLE
+[03:31:38] <<< END   command: CIRCLE  (Circle r=31.281 created.)
+[03:31:39] <<< END   command: CIRCLE  (*Cancel*)
+[03:31:47] >>> START command: TEXT
+[03:31:53] CMD_INPUT: '1'
+[03:31:53] CMD_INPUT: '1'
+[03:31:53] <<< END   command: TEXT  (Text created.)
+[03:32:52] >>> START command: RECTANG
+[03:32:53] <<< END   command: RECTANG  (Rectangle created.)
+[03:33:49] <<< END   command: RECTANG  (*Cancel*)
+[03:33:50] <<< END   command: RECTANG  (*Cancel*)
+[03:33:50] <<< END   command: RECTANG  (*Cancel*)
+[03:33:50] <<< END   command: RECTANG  (*Cancel*)
+[03:35:37] >>> START command: LINE
+[03:35:43] <<< END   command: LINE  (*Cancel*)
+[03:44:45] >>> START command: LINE
+[03:44:49] <<< END   command: LINE  (*Cancel*)
+[03:44:52] >>> START command: DIMANG
+[03:45:08] <<< END   command: DIMANG  (Angular dimension: 90.0 deg)
+[03:45:43] >>> START command: TEXT
+[03:45:47] CMD_INPUT: '50'
+[03:45:49] CMD_INPUT: 'a'
+[03:45:49] <<< END   command: TEXT  (*Cancel*)
+[03:45:49] >>> START command: ARC
+[03:45:53] <<< END   command: ARC  (*Cancel*)
+[03:45:53] <<< END   command: ARC  (*Cancel*)
+[03:45:54] <<< END   command: ARC  (*Cancel*)
+[03:45:54] <<< END   command: ARC  (*Cancel*)
+[03:45:54] <<< END   command: ARC  (*Cancel*)
+[03:45:54] >>> START command: TEXT
+[03:45:58] CMD_INPUT: '50'
+[03:46:05] CMD_INPUT: 'adaadaa'
+[03:46:05] <<< END   command: TEXT  (Text created.)
+[03:46:32] CMD_INPUT: 'EXPLODE'
+[03:46:32] >>> START command: EXPLODE
+[03:46:32] <<< END   command: EXPLODE  (Exploded into 0 segment(s).)
+[03:46:37] <<< END   command: EXPLODE  (*Cancel*)
+[03:46:37] <<< END   command: EXPLODE  (*Cancel*)
+[03:46:37] <<< END   command: EXPLODE  (*Cancel*)
+[04:04:19] >>> START command: LINE
+[04:04:20] <<< END   command: LINE  (*Cancel*)
+[04:04:23] >>> START command: DIMANG
+[04:04:31] <<< END   command: DIMANG  (Angular dimension: 84.2 deg)
+[04:04:36] <<< END   command: DIMANG  (*Cancel*)
+[04:04:36] <<< END   command: DIMANG  (*Cancel*)
+[04:04:37] <<< END   command: DIMANG  (*Cancel*)
+[04:04:39] <<< END   command: DIMANG  (*Cancel*)
+[04:23:48] >>> START command: LINE
+[04:23:49] <<< END   command: LINE  (*Cancel*)
+[04:23:58] >>> START command: DIMLINEAR
+[04:24:00] <<< END   command: DIMLINEAR  (Linear dimension: 55.56)
+[04:24:07] <<< END   command: DIMLINEAR  (*Cancel*)
+[04:24:09] >>> START command: DIMANG
+[04:24:16] <<< END   command: DIMANG  (Angular dimension: 78.9 deg)
+[04:24:22] <<< END   command: DIMANG  (*Cancel*)
+[04:24:26] >>> START command: LINE
+[04:24:28] <<< END   command: LINE  (*Cancel*)
+[04:24:29] >>> START command: CIRCLE
+[04:24:30] <<< END   command: CIRCLE  (Circle r=4.861 created.)
+[04:24:37] >>> START command: DIMLINEAR
+[04:24:40] <<< END   command: DIMLINEAR  (Linear dimension: 46.25)
+[04:24:45] >>> START command: UNDO
+[04:24:45] <<< END   command: UNDO  (Undone.)
+[04:24:47] >>> START command: DIMANG
+[04:24:51] <<< END   command: DIMANG  (Angular dimension: 68.8 deg)
+[04:25:05] <<< END   command: DIMANG  (*Cancel*)
+[04:25:05] <<< END   command: DIMANG  (*Cancel*)
+[04:25:06] <<< END   command: DIMANG  (*Cancel*)
+[04:25:06] >>> START command: DIMANG
+[04:25:10] <<< END   command: DIMANG  (Angular dimension: 68.8 deg)
+[04:25:51] >>> START command: LINE
+[04:25:53] <<< END   command: LINE  (*Cancel*)
+[04:25:56] >>> START command: DIMANG
+[04:25:59] <<< END   command: DIMANG  (Angular dimension: 31.4 deg)
+[04:27:46] >>> START command: ZOOM_EXT
+[04:27:46] <<< END   command: ZOOM_EXT  (zoom)
+[04:34:24] >>> START command: LINE
+[04:34:26] <<< END   command: LINE  (*Cancel*)
+[04:34:28] >>> START command: DIMANG
+[04:34:32] <<< END   command: DIMANG  (Angular dimension: 43.5 deg)
+[19:44:30] >>> START command: UNDO
+[19:44:30] <<< END   command: UNDO  (Undone.)
+[19:48:17] >>> START command: LINE
+[19:48:18] <<< END   command: LINE  (*Cancel*)
+[19:48:20] >>> START command: DIMLINEAR
+[19:48:24] <<< END   command: DIMLINEAR  (Linear dimension: 48.00)
+[19:56:27] >>> START command: LINE
+[19:56:28] <<< END   command: LINE  (*Cancel*)
+[19:56:44] >>> START command: POLYGON
+[19:56:46] <<< END   command: POLYGON  (*Cancel*)
+[19:56:47] >>> START command: RECTANG
+[19:56:48] <<< END   command: RECTANG  (Rectangle created.)
+[20:18:28] >>> START command: UNDO
+[20:18:28] <<< END   command: UNDO  (Undone.)
+[20:18:31] <<< END   command: UNDO  (*Cancel*)
+[20:18:32] <<< END   command: UNDO  (*Cancel*)
+[20:18:32] <<< END   command: UNDO  (*Cancel*)
+[20:18:32] <<< END   command: UNDO  (*Cancel*)

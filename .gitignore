@@ -1,25 +1,10 @@
 # Build artifacts
-/target/
 /dist/
 /build/
 *.exe
 *.dll
 *.so
 *.dylib
-
-# Cargo
-Cargo.lock
-
-# V1.1 build artifacts (EXE released as GitHub release assets)
-V1.1/dist/
-V1.1/build/
-V1.1/installer/
-V1.1/config/
-V1.1/logs/
-V1.1/__pycache__/
-V1.1/*.pyc
-V1.1/src/dist/
-V1.1/src/build/
 
 # Environment and secrets
 .env
@@ -45,10 +30,6 @@ __pycache__/
 *$py.class
 *.egg-info/
 *.egg
-
-# Node
-node_modules/
-package-lock.json
 
 # Logs
 *.log
